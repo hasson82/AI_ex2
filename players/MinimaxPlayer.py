@@ -2,6 +2,8 @@
 MiniMax Player
 """
 from players.AbstractPlayer import AbstractPlayer
+import numpy as np
+from SearchAlgos import MiniMax
 #TODO: you can import more modules, if needed
 
 
@@ -9,6 +11,11 @@ class Player(AbstractPlayer):
     def __init__(self, game_time, penalty_score):
         AbstractPlayer.__init__(self, game_time, penalty_score) # keep the inheritance of the parent's (AbstractPlayer) __init__()
         #TODO: initialize more fields, if needed, and the Minimax algorithm from SearchAlgos.py
+        self.board = None
+        self.pos = None
+        self.rival_pos = None
+        self.penalty_score = penalty_score
+        self.previous_fruit_dict = {}
 
 
     def set_game_params(self, board):
@@ -19,8 +26,10 @@ class Player(AbstractPlayer):
             - board: np.array, a 2D matrix of the board.
         No output is expected.
         """
-        #TODO: erase the following line and implement this function.
-        raise NotImplementedError
+        self.board = board
+        pos = np.where(board == 1)
+        # convert pos to tuple of ints
+        self.pos = tuple(ax[0] for ax in pos)
 
     def make_move(self, time_limit, players_score):
         """Make move with this Player.
@@ -39,8 +48,8 @@ class Player(AbstractPlayer):
             - pos: tuple, the new position of the rival.
         No output is expected
         """
-        #TODO: erase the following line and implement this function.
-        raise NotImplementedError
+        self.board[pos] = -1
+        self.rival_pos = pos
 
 
     def update_fruits(self, fruits_on_board_dict):
@@ -51,8 +60,16 @@ class Player(AbstractPlayer):
                                     'value' is the value of this fruit.
         No output is expected.
         """
-        #TODO: erase the following line and implement this function. In case you choose not to use it, use 'pass' instead of the following line.
-        raise NotImplementedError
+        # update
+        new_fruits = set((fruits_on_board_dict.keys()).difference(self.previous_fruit_dict.keys()))
+        fruits_to_delete = set((self.previous_fruit_dict.keys()).difference(fruits_on_board_dict.keys()))
+        for fruit_pos in new_fruits:
+            self.board[fruit_pos] = fruits_on_board_dict[fruit_pos]
+        for fruits_pos in fruits_to_delete:
+            self.board[fruit_pos] = 0
+
+        self.previous_fruit_dict = fruits_on_board_dict
+
 
 
     ########## helper functions in class ##########
