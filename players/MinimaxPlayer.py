@@ -3,6 +3,7 @@ MiniMax Player
 """
 from players.AbstractPlayer import AbstractPlayer
 import numpy as np
+from time import time
 from SearchAlgos import MiniMax
 #TODO: you can import more modules, if needed
 
@@ -38,8 +39,15 @@ class Player(AbstractPlayer):
         output:
             - direction: tuple, specifing the Player's movement, chosen from self.directions
         """
-        #TODO: erase the following line and implement this function.
-        raise NotImplementedError
+        Player player = self
+        start_time = time()
+        curr_time = time()
+        time_taken = curr_time - start_time
+        depth = 0
+        while time_taken < time_limit:
+            direction = MiniMax.search(player , depth, True)
+            depth = depth + 1
+        return direction
 
 
     def set_rival_move(self, pos):
