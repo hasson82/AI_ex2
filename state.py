@@ -27,8 +27,8 @@ class State:
         if is_goal(self):
             return get_utility(self)
         else:
-            # return round(uniform(-1, 1), 2)
-            return heuristic_implemenation()
+            return heuristic_implementation()
+
     def set_board(self, board):
         self.board = board
 
@@ -148,6 +148,7 @@ def get_move_between_states(initial_state, goal_state):
     j_dir = goal_pos[1] - initial_pos[1]
     return i_dir, j_dir
 
-def heuristic_implementation():
-    pass
 
+def heuristic_implementation(state):
+    # return round(uniform(-1, 1), 2)
+    pass
