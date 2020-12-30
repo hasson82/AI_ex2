@@ -50,16 +50,6 @@ class Player(AbstractPlayer):
             - direction: tuple, specifing the Player's movement, chosen from self.directions
         """
         # time based make_move
-        '''
-        depth = 1
-    
-        direction, state = self.mini_max_algo.search(self.state, depth, True)
-        self.state = state
-        depth = depth + 1
-        curr_time = time()
-        time_taken = curr_time - start_time
-        return direction
-        '''
         start_time = time()
         epsilon = get_epsilon()
         curr_time = time()
