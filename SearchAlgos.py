@@ -49,8 +49,7 @@ class MiniMax(SearchAlgos):
                 value, direction = self.search(c, depth-1, not maximizing_player)
                 if value < curr_min:
                     curr_min = value
-                    returned_direction = direction_to_son
-            return curr_min, returned_direction
+            return curr_min, None
 
 
 class AlphaBeta(SearchAlgos):
@@ -64,5 +63,31 @@ class AlphaBeta(SearchAlgos):
         :param: beta: beta value
         :return: A tuple: (The min max algorithm value, The direction in case of max node or None in min mode)
         """
-        #TODO: erase the following line and implement this function.
-        raise NotImplementedError
+        if self.goal(state) or depth == 0:
+            return state.heuristic_func(), None
+
+        if maximizing_player:
+            curr_max = float("-inf")
+            for c, direction_to_son in self.succ(state, state.get_turn()):
+                value, direction = self.search(c, (depth-1), not maximizing_player, alpha, beta)
+                if value >= curr_max:
+                    curr_max = value
+                    returned_direction = direction_to_son
+                if curr_max > alpha:
+                    alpha = curr_max
+                if curr_max >= beta:
+                    return float("inf"), None
+            return curr_max, returned_direction
+        else:
+            curr_min = float("inf")
+            for c, direction_to_son in self.succ(state, state.get_turn()):
+                value, direction = self.search(c, depth-1, not maximizing_player, alpha, beta)
+                # print("minimizer: depth", depth, "value", value, "curr min", curr_min, "alpha", alpha, "beta", beta)
+                if value <= curr_min:
+                    curr_min = value
+                if curr_min < beta:
+                    beta = curr_min
+                if curr_min <= alpha:
+                    return float("-inf"), None
+            return curr_min, None
+
