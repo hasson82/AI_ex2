@@ -3,3 +3,5 @@ analize_log.py
 .DS_Store
 .idea/
 __pycache__/
+board_reachable.py
+boards/huge_board.csv
