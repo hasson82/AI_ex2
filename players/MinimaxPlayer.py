@@ -17,9 +17,9 @@ class Player(AbstractPlayer):
         # TODO: initialize more fields, if needed, and the Minimax algorithm from SearchAlgos.py
         self.state = State(True, penalty_score)
         self.penalty_score = penalty_score
-        self.previous_fruit_dict = {}
         self.mini_max_algo = MiniMax(get_utility, get_succ, perform_move,
                                      is_goal)
+        self.initialized = False
 
     def set_game_params(self, board):
         """Set the game parameters needed for this player.
@@ -33,14 +33,16 @@ class Player(AbstractPlayer):
         pos = np.where(board == 1)
         # convert pos to tuple of ints
         player_pos = tuple(ax[0] for ax in pos)
-        # print("player position inside game params ", player_pos)
         self.state.set_pos(player_pos, True)
-        # print("player position inside state ", self.state.player_pos)
         pos = np.where(board == 2)
         rival_pos = tuple(ax[0] for ax in pos)
         self.state.set_pos(rival_pos, False)
         self.state.set_score(0, True)
         self.state.set_score(0, False)
+        if len(self.state.board) < len(self.state.board[0]):
+            self.state.num_of_turns_left_for_fruits = 2 * len(self.state.board)
+        else:
+            self.state.num_of_turns_left_for_fruits = 2 * len(self.state.board[0])
 
     def make_move(self, time_limit, players_score):
         """Make move with this Player.
@@ -51,10 +53,9 @@ class Player(AbstractPlayer):
         """
         # time based make_move
         start_time = time()
-        epsilon = get_epsilon()
         curr_time = time()
         depth = 1
-        while curr_time - start_time < time_limit - next(epsilon):
+        while curr_time - start_time < 0.35*time_limit:
             value, direction = self.mini_max_algo.search(self.state, depth, True)
             curr_time = time()
             depth = depth + 1
@@ -67,13 +68,26 @@ class Player(AbstractPlayer):
             - pos: tuple, the new position of the rival.
         No output is expected
         """
+        '''
+        self.state.print_state()
+        last_positions = np.where(self.state.board == 2)
+        last_pos = tuple(ax[0] for ax in last_positions)
+        x_dir = pos[0] - last_pos[0]
+        y_dir = pos[1] - last_pos[1]
+        direction = (x_dir, y_dir)
+        self.state = perform_move(self.state, direction, False)
+        self.state.switch_turn()
+        '''
         board = self.state.board
         new_rival_score = self.state.rival_score + board[pos]
-        self.state.set_score(new_rival_score, False)
+        self.state.check_if_player_ate_fruit(pos)
         board[self.state.get_pos(False)] = -1
         board[pos] = 2
+        self.state.num_of_turns_left_for_fruits = self.state.num_of_turns_left_for_fruits - 1
         self.state.set_board(board)
         self.state.set_pos(pos, False)
+        self.state.set_score(new_rival_score, False)
+
     def update_fruits(self, fruits_on_board_dict):
         """Update your info on the current fruits on board (if needed).
         input:
@@ -83,21 +97,16 @@ class Player(AbstractPlayer):
         No output is expected.
         """
         # update
-        board = self.state.board
-        fruits_to_delete = set((self.previous_fruit_dict.keys())).difference(set(fruits_on_board_dict.keys()))
-        for fruit_pos in fruits_to_delete:
-            board[fruit_pos] = 0
-        self.state.set_board(board)
-        self.previous_fruit_dict = fruits_on_board_dict
+        if not self.initialized:
+            self.state.fruit_dict = fruits_on_board_dict
+            self.state.fruits_sum = sum(fruits_on_board_dict.values())
+            self.initialized = True
+        return
+
 
     ########## helper functions in class ##########
     # TODO: add here helper functions in class, if needed
-def get_epsilon():
-    a, b= 0.0025, 0.006
-    yield a
-    while 1:
-        a, b = b, a+b
-        yield a
+
     ########## helper functions for MiniMax algorithm ##########
     # TODO: add here the utility, succ, and perform_move functions used in MiniMax algorithm
 

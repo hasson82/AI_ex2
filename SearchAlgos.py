@@ -42,6 +42,7 @@ class MiniMax(SearchAlgos):
                 if value > curr_max:
                     curr_max = value
                     returned_direction = direction_to_son
+            # print("maximizing: heuristic value", curr_max, "depth", depth, "direction", returned_direction)
             return curr_max, returned_direction
         else:
             curr_min = float("inf")
@@ -49,6 +50,7 @@ class MiniMax(SearchAlgos):
                 value, direction = self.search(c, depth-1, not maximizing_player)
                 if value < curr_min:
                     curr_min = value
+            # print("minimizing: heuristic value", curr_min, "direction None")
             return curr_min, None
 
 
