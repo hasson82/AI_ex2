@@ -35,7 +35,7 @@ class Game:
         
         self.fruits_max_part_of_free_spaces = fruits_max_part_of_free_spaces
         self.players_positions = players_positions
-        self.players_score = [0 ,0] # init scores for each player
+        self.players_score = [0, 0]  # init scores for each player
         self.directions = utils.get_directions()
         # Fruits:
         fruits_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fruits_imgs')
