@@ -5,3 +5,6 @@ analize_log.py
 __pycache__/
 board_reachable.py
 boards/huge_board.csv
+boards/big_board.csv
+boards/very_big_board.csv
+boards/tomer_board.csv
